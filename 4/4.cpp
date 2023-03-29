@@ -1,39 +1,64 @@
-#include<bits/stdc++.h>
+// This code implemented using Algorithm in Coremen book
+ 
+#include<iostream>
+#include<limits.h>
+ 
 using namespace std;
-
+ 
+// Matrix Ai has dimension p[i-1] x p[i] for i = 1..n
+ 
+int MatrixChainMultiplication(int p[], int n)
+{
+    int m[n][n];
+    int i, j, k, L, q;
+ 
+    for (i=1; i<n; i++)
+        m[i][i] = 0;    //number of multiplications are 0(zero) when there is only one matrix
+ 
+    //Here L is chain length. It varies from length 2 to length n.
+    for (L=2; L<n; L++)
+    {
+        for (i=1; i<n-L+1; i++)
+        {
+            j = i+L-1;
+            m[i][j] = INT_MAX;  //assigning to maximum value
+ 
+            for (k=i; k<=j-1; k++)
+            {
+                q = m[i][k] + m[k+1][j] + p[i-1]*p[k]*p[j];
+                if (q < m[i][j])
+                {
+                    m[i][j] = q;    //if number of multiplications found less that number will be updated.
+                }
+            }
+        }
+    }
+ 
+    return m[1][n-1];   //returning the final answer which is M[1][n]
+ 
+}
+ 
 int main()
 {
-    int n;
-    cout<<"Enter number of dimensions:";
+    int n,i;
+    cout<<"Enter number of matrices\n";
     cin>>n;
-    int a[n];
-    cout<<"Enter dimensions:";
-    for(int i=0;i<n;i++)
-    cin>>a[i];
-    int m[n][n];
-    for(int i=0;i<n;i++)
+ 
+    n++;
+ 
+    int arr[n];
+ 
+    cout<<"Enter dimensions \n";
+ 
+    for(i=0;i<n;i++)
     {
-        for(int j=0;j<n;j++)
-        {
-            if(i==0 || j==0 || i==j)
-            m[i][j]=0;
-        }
+        cout<<"Enter d"<<i<<" :: ";
+        cin>>arr[i];
     }
-    for(int r=1;r<n;r++)
-    {
-        int t,j=1+r;
-        for(int i=1;j<n;i++,j=i+r)
-        {
-            for(int k=i;k<j;k++)
-            {
-                t=m[i][k]+m[k+1][j]+a[i-1]*a[k]*a[j];
-                if(k==i)
-                m[i][j]=t;
-                else
-                m[i][j]=min(t,m[i][j]);
-            }
-            // cout<<"m["<<i<<"]["<<j<<"]="<<m[i][j]<<endl;
-        }
-    }
-    cout<<"Optimal cost for parenthesization is:"<<m[1][n-1]<<endl;
+ 
+    int size = sizeof(arr)/sizeof(arr[0]);
+ 
+    cout<<"Minimum number of multiplications is "<<MatrixChainMultiplication(arr, size);
+ 
+    return 0;
 }
